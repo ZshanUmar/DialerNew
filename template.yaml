@@ -24,7 +24,7 @@ Resources:
             Path: /test
             Method: post
             RequestModel:
-              application/json: EndpointSchemas/newLead.json
+              application/json: file://EndpointSchemas/newLead.json
 
   psycopg2Layer:
     Type: AWS::Serverless::LayerVersion
