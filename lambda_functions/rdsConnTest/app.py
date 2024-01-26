@@ -19,11 +19,16 @@ def establish_connection():
         raise Exception(f"Connection failed: {str(e)}")
 
 def lambda_handler(event, context):
-    
-    connection = establish_connection()
-    if connection:
-        connection.close()
+    try:
+        connection = establish_connection()
+        if connection:
+            connection.close()
+            return {
+                'statusCode': 200,
+                'body': f'Connection Established Successfully, event = {event}, context = {context}'
+            }
+    except Exception as e:
         return {
-            'statusCode': 200,
-            'body': f'Connection Established Successfully, event = {event}, context = {context}'
-        }
+                'statusCode': 500,
+                'body': f'Connection Failed, {str(e)}'
+            }
