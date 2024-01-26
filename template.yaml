@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  dialer-app
+
+Globals:
+  Function:
+    Timeout: 300
+    MemorySize: 128
+
+Resources:
+  RdsConnTestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda_functions/rdsConnTest/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Layers:
+        - !Ref psycopg2Layer
+      Events:
+        RdsConnTest:
+          Type: Api
+          Properties:
+            Path: /test
+            Method: post
+
+  psycopg2Layer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleArchitectures:
+        - x86_64
+      CompatibleRuntimes:
+        - python3.9
+      ContentUri: lambda_functions/layers/psycopg2
+      LayerName: psycopg2
+
+Outputs:
+  RdsConnTestApi:
+    Description: "API Gateway endpoint URL for Prod stage for Rds Conn Test function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  RdsConnTestFunction:
+    Description: "Rds Conn Test Lambda Function ARN"
+    Value: !GetAtt RdsConnTestFunction.Arn
+  RdsConnTestFunctionIamRole:
+    Description: "Implicit IAM Role created for Rds Conn Test function"
+    Value: !GetAtt RdsConnTestFunctionRole.Arn
